@@ -8,7 +8,7 @@ export class LenguajesService {
 
     getAll() {
 
-        return this.databaseService.getConnection()
+        return this.databaseService.connection()
         .withSchema('intercoding')
         .table('t_lenguajes')
         .select();
@@ -16,7 +16,7 @@ export class LenguajesService {
 
     getById(id) {
 
-        return this.databaseService.getConnection()
+        return this.databaseService.connection()
         .withSchema('intercoding')
         .table('t_lenguajes')
         .select()

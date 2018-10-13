@@ -8,7 +8,7 @@ export class LenguajesController {
     constructor(private readonly lenguajesService: LenguajesService) {}
 
     @Get()
-    @UseGuards(AuthGuard())
+    // @UseGuards(AuthGuard())
     async getAll() {
 
         const datos = await this.lenguajesService.getAll();

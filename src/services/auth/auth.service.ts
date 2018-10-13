@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import * as knex from 'knex';
+import { DatabaseService } from '../util/database.service';
 
 @Injectable()
 export class AuthService {
 
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(private readonly jwtService: JwtService,
+              private readonly databaseService: DatabaseService) {}
 
   async login(usuario, password) {
-    const connection = this.getConnection(usuario, password);
 
-    return connection
+    return this.databaseService.connection
       .raw(`select intercoding.f_validar_usuario('${usuario}', '${password}')`)
       .then(data => {
 
@@ -27,18 +27,7 @@ export class AuthService {
           status: 'error',
           message: 'El usuario no esta registrado en la base de datos',
         };
-      })
-
-      .finally(() => {
-        connection.destroy();
       });
-  }
-
-  getConnection(usuario, password) {
-    return knex({
-      client: 'postgresql',
-      connection: `postgres://${usuario}:${password}@localhost:5432/data_base`,
-    });
   }
 
 }

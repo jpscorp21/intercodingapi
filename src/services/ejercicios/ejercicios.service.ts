@@ -7,7 +7,7 @@ export class EjerciciosService {
 
     getAll(nombre: string, cod_categoria: string, grado_dificultad: string, cantidad: string) {
 
-        return this.databaseService.getConnection()
+        return this.databaseService.connection()
         .withSchema('intercoding')
         .select('cod_aleatorio', 'eje.cod_ejercicio', 'descripcion', 'titulo', 'ejemplo', 'imagen', 'eje.cod_categoria', 'eje.grado_dificultad',
         'estado')
@@ -31,7 +31,7 @@ export class EjerciciosService {
 
     getEjercicioReanudar(nombre: string, cod_categoria: string, grado_dificultad: string) {
 
-        return this.databaseService.getConnection()
+        return this.databaseService.connection()
         .withSchema('intercoding')
         .select('estado', 'cod_aleatorio',
                 'eje.cod_ejercicio', 'descripcion', 'titulo',
@@ -49,13 +49,13 @@ export class EjerciciosService {
             ['eje.grado_dificultad']: grado_dificultad,
             ['eje.cod_categoria']: cod_categoria,
         })
-        .whereIn('estado', ['LEC', 'DES', 'REV'])
+        .whereIn('estado', ['LEC', 'DES', 'REV', 'COR'])
         .orderBy('cod_aleatorio', 'asc');
 
     }
 
     getById(id) {
-        return this.databaseService.getConnection()
+        return this.databaseService.connection()
         .withSchema('intercoding')
         .select('cod_ejercicio', 'titulo')
         .from('t_ejercicios')
@@ -63,7 +63,7 @@ export class EjerciciosService {
     }
 
     updateEstado(estado, id) {
-        return this.databaseService.getConnection()
+        return this.databaseService.connection()
         .withSchema('intercoding')
         .table('t_aleatorios')
         .update('estado', estado)
@@ -71,7 +71,7 @@ export class EjerciciosService {
     }
 
     updateNroEjercicio(nro, id) {
-        return this.databaseService.getConnection()
+        return this.databaseService.connection()
         .withSchema('intercoding')
         .table('t_aleatorios')
         .update('nro_ejercicio', nro)
@@ -79,13 +79,13 @@ export class EjerciciosService {
     }
 
     searchEstadosTerminados(usuario, grado_dificultad, cod_categoria, cantidad) {
-      return this.databaseService.getConnection()
+      return this.databaseService.connection()
       .raw(`select intercoding.f_terminados('${usuario}', 'TER', ${cod_categoria}, ${grado_dificultad}, ${cantidad})`)
       .then((data) => data.rows[0].f_terminados);
     }
 
     validarEntrega(id, puntaje, usuario) {
-        return this.databaseService.getConnection()
+        return this.databaseService.connection()
         .withSchema('intercoding')
         .table('t_aleatorios')
         .update({
@@ -96,7 +96,7 @@ export class EjerciciosService {
     }
 
     validarRevision(id, usuario) {
-        return this.databaseService.getConnection()
+        return this.databaseService.connection()
         .withSchema('intercoding')
         .table('t_aleatorios_det')
         .update({
@@ -108,10 +108,10 @@ export class EjerciciosService {
     }
 
     buscarEstado(usu, categoria) {
-        return this.databaseService.getConnection()
+        return this.databaseService.connection()
         .withSchema('intercoding')
         .select('estado', 'cod_ejercicio', 'usuario', 'grado_dificultad', 'cod_categoria', 'cod_aleatorio')
         .from('t_aleatorios')
-        .whereRaw(`estado in ('LEC', 'DES', 'REV') and usuario = ? and cod_categoria = ?`, [usu, categoria]);
+        .whereRaw(`estado in ('LEC', 'DES', 'REV', 'COR') and usuario = ? and cod_categoria = ?`, [usu, categoria]);
     }
 }

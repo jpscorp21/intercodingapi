@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { AuthService } from '../../services/auth/auth.service';
 import { ConcursantesService } from '../../services/concursantes/concursantes.service';
 
@@ -30,7 +30,14 @@ export class ConcursantesController {
 
     @Get('/all')
     async getAll() {
-        const resultado = await this.concursantesService.getAll();
+        const resultado = await this.concursantesService.getAllConcursantes();
         return resultado;
     }
+
+    @Get('/desarrollo/:cod_aleatorio')
+    async getByDesarrollo(@Param('cod_aleatorio') cod_aleatorio) {
+        const resultado = await this.concursantesService.getConcursanteByDesarrollo(cod_aleatorio);
+        return resultado;
+    }
+
 }

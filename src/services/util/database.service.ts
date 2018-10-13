@@ -1,24 +1,33 @@
 import * as knex from 'knex';
+import { readFileSync } from 'fs';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class DatabaseService {
-  private connection;
+  private _connection;
 
   constructor() {
-    this.connection = knex({
+
+    const information = this.getDatabaseInformation(process.env.ENV || 'development');
+    this._connection = knex({
       client: 'postgres',
       connection: {
-        host: 'localhost',
-        user: 'user',
-        password: 'password',
-        database: 'data_base',
+        host: information.host,
+        user: information.username,
+        password: information.password,
+        database: information.database,
       },
-      pool: { min: 2, max: 100 },
+      pool: { min: information.pool.min, max: information.pool.max },
     });
   }
 
-  getConnection() {
-      return this.connection;
+  get connection() {
+      return this._connection;
+  }
+
+  private getDatabaseInformation(env: string) {
+    const resultado = readFileSync('src/config/config.json', {encoding: 'utf-8'});
+    const resultadoParse = JSON.parse(resultado);
+    return resultadoParse.datasource[env];
   }
 }
