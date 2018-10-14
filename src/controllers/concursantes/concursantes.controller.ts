@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, HttpStatus } from '@nestjs/common';
 import { AuthService } from '../../services/auth/auth.service';
 import { ConcursantesService } from '../../services/concursantes/concursantes.service';
+import { ResultResponse } from 'util/result-response';
 
 @Controller('concursantes')
 export class ConcursantesController {
@@ -15,15 +16,17 @@ export class ConcursantesController {
             const concursante = await this.concursantesService.getConcursante(body.usuario);
 
             return {
-                concursante: {
-                    nombre: concursante[0].nombre,
-                    apellido: concursante[0].apellido,
-                    usuario: concursante[0].usuario,
-                    cod_concursante: concursante[0].cod_concursante,
-                    cod_categoria: concursante[0].cod_categoria,
+                statusCode: HttpStatus.OK,
+                results: {
+                    concursante: {
+                        nombre: concursante[0].nombre,
+                        apellido: concursante[0].apellido,
+                        usuario: concursante[0].usuario,
+                        cod_concursante: concursante[0].cod_concursante,
+                        cod_categoria: concursante[0].cod_categoria,
+                    },
                 },
                 token: resultado.token,
-                status: resultado.status,
             };
         }
     }
@@ -31,13 +34,13 @@ export class ConcursantesController {
     @Get('/all')
     async getAll() {
         const resultado = await this.concursantesService.getAllConcursantes();
-        return resultado;
+        return ResultResponse.Ok('GET', resultado);
     }
 
     @Get('/desarrollo/:cod_aleatorio')
     async getByDesarrollo(@Param('cod_aleatorio') cod_aleatorio) {
         const resultado = await this.concursantesService.getConcursanteByDesarrollo(cod_aleatorio);
-        return resultado;
+        return ResultResponse.Ok('GET', resultado);
     }
 
 }
